@@ -126,8 +126,9 @@ namespace DiscordDataAnalyzer.Parser
         [JsonPropertyName("emoji_managed_external")]
         public string EmojiManagedExternal { get; set; }
 
-        [JsonPropertyName("emoji_animated")]
-        public string EmojiAnimated { get; set; }
+        // TODO: Fix, sometimes "0", sometimes 'true'
+        // [JsonPropertyName("emoji_animated")]
+        // public bool EmojiAnimated { get; set; }
 
         [JsonPropertyName("emoji_only")]
         public bool EmojiOnly { get; set; }

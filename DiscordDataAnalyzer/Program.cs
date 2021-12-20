@@ -39,7 +39,12 @@ namespace DiscordDataAnalyzer
                 Log.Information("{Rank,-2} {Channel,27}: {Messages}", rank++, channel, channel.EventCount["send_message"]);
                 Log.Information("> First {Start:dd/MM/yyyy}", channel.MessageFirst);
                 Log.Information("> Last  {Start:dd/MM/yyyy}", channel.MessageLast);
-                Log.Information("> Messages per day {Count}", channel.EventCount["send_message"] / (channel.MessageLast - channel.MessageFirst)?.Days);
+
+                var daysBetween = (channel.MessageLast - channel.MessageFirst)?.Days;
+                if (daysBetween > 0)
+                {
+                    Log.Information("> Messages per day {Count}", channel.EventCount["send_message"] / daysBetween);
+                }
                 
                 // Log.Information("> Popular hours");
                 //
