@@ -18,9 +18,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore -c Release
-    - name: Publish
-      run: dotnet publish --no-build -c Release -r win-x64 --self-contained -p:PublishTrimmed=true -p:PublishSingleFile=true -o build/
+      run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishTrimmed=true -p:PublishSingleFile=true -o build/
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
