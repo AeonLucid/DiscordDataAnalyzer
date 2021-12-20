@@ -15,9 +15,11 @@ namespace DiscordDataAnalyzer.Parser
             _path = path;
 
             Channels = new Dictionary<string, DiscordChannel>();
+            Devices = new List<DiscordDevice>();
         }
 
         public Dictionary<string, DiscordChannel> Channels { get; }
+        public List<DiscordDevice> Devices { get; }
 
         public async Task ParseAsync()
         {
@@ -59,6 +61,17 @@ namespace DiscordDataAnalyzer.Parser
                     }
                         
                     channel.OnEvent(item);
+                }
+
+                if (!string.IsNullOrEmpty(item.Browser))
+                {
+                    Devices.Add(new DiscordDevice
+                    {
+                        Browser = item.Browser,
+                        Device = item.Device ?? $"{item.Os} {item.OsVersion}",
+                        Ip = item.Ip,
+                        Timestamp = item.Timestamp
+                    });
                 }
             }
         }

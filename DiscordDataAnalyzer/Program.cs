@@ -27,7 +27,7 @@ namespace DiscordDataAnalyzer
             await package.ParseAsync();
             
             // Statistics.
-            Log.Information("Showing statistics");
+            Log.Information("Showing message stats");
 
             var rank = 1;
             
@@ -40,15 +40,43 @@ namespace DiscordDataAnalyzer
                 Log.Information("> First {Start:dd/MM/yyyy}", channel.MessageFirst);
                 Log.Information("> Last  {Start:dd/MM/yyyy}", channel.MessageLast);
                 Log.Information("> Messages per day {Count}", channel.EventCount["send_message"] / (channel.MessageLast - channel.MessageFirst)?.Days);
-                Log.Information("> Popular hours");
                 
-                foreach (var value in channel.MessageHours
-                    .OrderByDescending(x => x.Value)
-                    .Take(4)
-                    .Select(x => $"{x.Key:00}:00 ({x.Value})"))
-                {
-                    Log.Information("  {Hour}", value);
-                }
+                // Log.Information("> Popular hours");
+                //
+                // foreach (var value in channel.MessageHours
+                //     .OrderByDescending(x => x.Value)
+                //     .Take(4)
+                //     .Select(x => $"{x.Key:00}:00 ({x.Value})"))
+                // {
+                //     Log.Information("  {Hour}", value);
+                // }
+            }
+
+            var dateMax = package.Devices.Max(x => x.Timestamp);
+            var dateMin = dateMax.Subtract(TimeSpan.FromDays(14));
+
+            Log.Information("Showing device stats from {From,-12} - {To,-12}", 
+                dateMin.ToString("yyyy/MM/dd"), 
+                dateMax.ToString("yyyy/MM/dd"));
+            
+            foreach (var devices in package.Devices
+                         .Where(x => x.Timestamp >= dateMin && x.Timestamp <= dateMax)
+                         .OrderBy(x => x.Timestamp)
+                         .GroupBy(x => x.Key()))
+            {
+                var entries = devices.ToList();
+                var entry = entries[0];
+
+                var accessFirst = entries.Min(x => x.Timestamp);
+                var accessLast = entries.Max(x => x.Timestamp);
+                
+                Log.Information("{Amount,-8} {Browser,-16} {Device,-32} {Ip,-16} {First,-12} {Last,-12}",
+                    entries.Count,
+                    entry.Browser,
+                    entry.Device,
+                    entry.Ip,
+                    accessFirst.ToString("yyyy/MM/dd"), 
+                    accessLast.ToString("yyyy/MM/dd"));
             }
         }
     }
